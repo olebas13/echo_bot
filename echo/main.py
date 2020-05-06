@@ -1,3 +1,6 @@
+from subprocess import Popen
+from subprocess import PIPE
+
 from telegram import Bot
 from telegram import Update
 from telegram.ext import Updater
@@ -24,6 +27,30 @@ def do_echo(bot: Bot, update: Update):
     )
 
 
+def do_help(bot: Bot, update: Update):
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text="Это учебный бот\n"
+             "Список доступных команд есть в меню\n"
+             "Так же я отвечу на любое сообщение"
+    )
+
+
+def do_time(bot: Bot, update: Update):
+    process = Popen("echo %date% %time:~-11,8%", shell=True, stdout=PIPE)
+    text, error = process.communicate()
+
+    if error:
+        text = "Произошла ошибка, время неизвестно"
+    else:
+        text = text.decode("utf-8")
+
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text=text
+    )
+
+
 def main():
     bot = Bot(
         token=TG_TOKEN
@@ -33,9 +60,13 @@ def main():
     )
 
     start_handler = CommandHandler("start", do_start)
+    help_handler = CommandHandler("help", do_help)
+    time_handler = CommandHandler("time", do_time)
     message_handler = MessageHandler(Filters.text, do_echo)
 
     updater.dispatcher.add_handler(start_handler)
+    updater.dispatcher.add_handler(help_handler)
+    updater.dispatcher.add_handler(time_handler)
     updater.dispatcher.add_handler(message_handler)
 
     updater.start_polling()
