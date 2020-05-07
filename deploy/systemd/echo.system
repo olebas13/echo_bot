@@ -1,0 +1,13 @@
+[Unit]
+Description=Echo Daemon
+After=multi-user.target
+
+[Service]
+Type=idle
+Environment=TG_CONF=production PYTHONPATH=/home/teleg/echo_bot/
+ExecStart=/usr/bin/python3 /home/teleg/echo_bot/echo/main.py
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
