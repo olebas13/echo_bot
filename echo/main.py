@@ -37,7 +37,7 @@ def do_help(bot: Bot, update: Update):
 
 
 def do_time(bot: Bot, update: Update):
-    process = Popen("echo %date% %time:~-11,8%", shell=True, stdout=PIPE)
+    process = Popen(["date"], stdout=PIPE)
     text, error = process.communicate()
 
     if error:
